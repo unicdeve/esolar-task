@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # custom apps
     "accounts.apps.AccountsConfig",
+    "todo.apps.TodoConfig",
     # third-party libs
     "rest_framework",
     "rest_framework.authtoken",
