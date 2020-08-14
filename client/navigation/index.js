@@ -4,12 +4,14 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import Login from '../screens/Login';
+import SignUp from '../screens/SignUp';
 
 import { theme } from '../constants';
 
 const screens = createStackNavigator(
 	{
 		Login,
+		SignUp,
 	},
 	{
 		defaultNavigationOptions: {

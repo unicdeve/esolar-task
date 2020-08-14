@@ -62,7 +62,7 @@ export default function Login(props) {
 						)}
 					</Button>
 
-					<Button onPress={() => navigation.navigate('Signup')}>
+					<Button onPress={() => navigation.navigate('SignUp')}>
 						<Text gray caption center style={styles.forget}>
 							Sign up
 						</Text>
