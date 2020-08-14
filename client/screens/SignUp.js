@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+
 import {
 	ActivityIndicator,
 	StyleSheet,
@@ -9,56 +12,54 @@ import {
 
 import { Block, Text, Input, Button } from '../components/utils';
 import { theme } from '../constants';
+import { useForm } from '../utils/hooks/useForm';
+import isEmpty from '../utils/validations/is-empty';
+import {
+	selectErrors,
+	selectLoading,
+} from '../redux/account/account.selectors';
+import { validateSignupData } from '../utils/validations/sign-up';
+import { getErrors, registerUser } from '../redux/account/account.actions';
 
-export default function SignUp(props) {
-	const [values, setValues] = useState({
+function SignUp(props) {
+	const initialValues = {
 		name: '',
 		email: '',
 		username: '',
 		password: '',
-		confirmPassword: '',
-		errors: {},
-		loading: false,
-	});
+		confirm_password: '',
+	};
 
-	const {
-		name,
-		email,
-		username,
-		confirmPassword,
-		password,
-		errors,
-		loading,
-	} = values;
-	const { navigation } = props;
+	const { values, errors, setErrors, onChangeText, handleSubmit } = useForm(
+		submitForm,
+		initialValues
+	);
 
-	const handleLogin = () => {
-		setValues({ ...values, loading: true });
+	const { name, email, username, confirm_password, password } = values;
+
+	const { navigation, dataErrors, dispatch, loading } = props;
+
+	function submitForm() {
 		Keyboard.dismiss();
 
-		if (email === '') {
-			errors.email = 'email is required';
-			setValues({ ...values, loading: false });
-		} else if (password === '') {
-			errors.password = 'password is required';
-			setValues({ ...values, loading: false });
-		} else {
-			setTimeout(() => {
-				setValues({ ...values, loading: false });
-				Alert.alert(
-					'Success!',
-					'Your account has been created.',
-					[
-						{
-							text: 'Continue',
-							onPress: () => navigation.navigate('Browse'),
-						},
-					],
-					{ cancelable: false }
-				);
-			}, 2000);
+		const { isValid, errors } = validateSignupData(values);
+
+		if (!isValid) dispatch(getErrors(errors));
+		else {
+			dispatch(registerUser(values, navigation));
 		}
-	};
+	}
+
+	useEffect(() => {
+		if (!isEmpty(dataErrors)) {
+			console.log(dataErrors);
+			setErrors(dataErrors);
+		}
+
+		return () => {
+			setErrors({});
+		};
+	}, [dataErrors, setErrors]);
 
 	return (
 		<ScrollView>
@@ -70,52 +71,50 @@ export default function SignUp(props) {
 				<Block middle>
 					<Input
 						label='Full name'
-						error={errors.name ? true : false}
+						error={errors.name}
 						style={[styles.input, errors.name ? styles.hasErrors : null]}
 						defaultValue={name}
-						onChangeText={(text) => setValues({ ...values, name: text })}
+						onChangeText={(text) => onChangeText('name', text)}
 					/>
 
 					<Input
 						label='Username'
-						error={errors.username ? true : false}
+						error={errors.username}
 						style={[styles.input, errors.username ? styles.hasErrors : null]}
 						defaultValue={username}
-						onChangeText={(text) => setValues({ ...values, username: text })}
+						onChangeText={(text) => onChangeText('username', text)}
 					/>
 
 					<Input
 						label='Email'
-						error={errors.email ? true : false}
+						error={errors.email}
 						style={[styles.input, errors.email ? styles.hasErrors : null]}
 						defaultValue={email}
-						onChangeText={(text) => setValues({ ...values, email: text })}
+						onChangeText={(text) => onChangeText('email', text)}
 					/>
 
 					<Input
 						secure
 						label='Password'
-						error={errors.password ? true : false}
+						error={errors.password}
 						style={[styles.input, errors.password ? styles.hasErrors : null]}
 						defaultValue={password}
-						onChangeText={(text) => setValues({ ...values, password: text })}
+						onChangeText={(text) => onChangeText('password', text)}
 					/>
 
 					<Input
 						secure
 						label='Confirm password'
-						error={errors.confirmPassword ? true : false}
+						error={errors.confirm_password}
 						style={[
 							styles.input,
-							errors.confirmPassword ? styles.hasErrors : null,
+							errors.confirm_password ? styles.hasErrors : null,
 						]}
-						defaultValue={confirmPassword}
-						onChangeText={(text) =>
-							setValues({ ...values, confirmPassword: text })
-						}
+						defaultValue={confirm_password}
+						onChangeText={(text) => onChangeText('confirm_password', text)}
 					/>
 
-					<Button gradient onPress={handleLogin}>
+					<Button gradient onPress={handleSubmit}>
 						{loading ? (
 							<ActivityIndicator size='small' color='white' />
 						) : (
@@ -158,3 +157,10 @@ const styles = StyleSheet.create({
 		borderBottomColor: theme.colors.accent,
 	},
 });
+
+const mapStateToProps = createStructuredSelector({
+	dataErrors: selectErrors,
+	loading: selectLoading,
+});
+
+export default connect(mapStateToProps)(SignUp);

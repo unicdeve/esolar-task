@@ -100,6 +100,7 @@ export default class Input extends Component {
 				/>
 				{this.renderToggle()}
 				{this.renderRight()}
+				{error ? <Text style={styles.error}>{error}</Text> : null}
 			</Block>
 		);
 	}
@@ -122,5 +123,10 @@ const styles = StyleSheet.create({
 		height: theme.sizes.base * 1.2,
 		top: theme.sizes.base,
 		right: 5,
+	},
+	error: {
+		fontSize: theme.sizes.base * 0.6,
+		fontWeight: '500',
+		color: theme.colors.accent,
 	},
 });

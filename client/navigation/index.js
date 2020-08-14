@@ -3,6 +3,7 @@ import { Image } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
+import Home from '../screens/Home';
 import Login from '../screens/Login';
 import SignUp from '../screens/SignUp';
 
@@ -12,6 +13,7 @@ const screens = createStackNavigator(
 	{
 		Login,
 		SignUp,
+		Home,
 	},
 	{
 		defaultNavigationOptions: {

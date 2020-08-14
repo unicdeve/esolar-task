@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+
 import {
 	ActivityIndicator,
 	StyleSheet,
@@ -8,24 +11,51 @@ import {
 
 import { Block, Text, Input, Button } from '../components/utils';
 import { theme } from '../constants';
+import { useForm } from '../utils/hooks/useForm';
+import isEmpty from '../utils/validations/is-empty';
+import {
+	selectErrors,
+	selectLoading,
+} from '../redux/account/account.selectors';
+import { validateSignInData } from '../utils/validations/login';
+import { getErrors, loginUser } from '../redux/account/account.actions';
 
-export default function Login(props) {
-	const [values, setValues] = useState({
-		email: 'email@email.com',
-		password: 'password',
-		errors: {},
-		loading: false,
-	});
+function Login(props) {
+	const initialValues = {
+		username: '',
+		password: '',
+	};
 
-	const { email, password, errors, loading } = values;
-	const { navigation } = props;
+	const { values, errors, setErrors, onChangeText, handleSubmit } = useForm(
+		handleLogin,
+		initialValues
+	);
 
-	const handleLogin = () => {
-		setValues({ ...values, loading: true });
+	const { username, password } = values;
+
+	const { navigation, dataErrors, dispatch, loading } = props;
+
+	function handleLogin() {
 		Keyboard.dismiss();
 
-		// login actions
-	};
+		const { isValid, errors } = validateSignInData(values);
+
+		if (!isValid) dispatch(getErrors(errors));
+		else {
+			dispatch(loginUser(values, navigation));
+		}
+	}
+
+	useEffect(() => {
+		if (!isEmpty(dataErrors)) {
+			console.log(dataErrors);
+			setErrors(dataErrors);
+		}
+
+		return () => {
+			setErrors({});
+		};
+	}, [dataErrors, setErrors]);
 
 	return (
 		<KeyboardAvoidingView style={styles.login} behavior='height'>
@@ -37,22 +67,22 @@ export default function Login(props) {
 				<Block middle>
 					<Input
 						label='Email or username'
-						error={errors.email ? true : false}
-						style={[styles.input, errors.email ? styles.hasErrors : null]}
-						defaultValue={email}
-						onChangeText={(text) => setValues({ ...values, email: text })}
+						error={errors.username}
+						style={[styles.input, errors.username ? styles.hasErrors : null]}
+						defaultValue={username}
+						onChangeText={(text) => onChangeText('username', text)}
 					/>
 
 					<Input
 						secure
 						label='Password'
-						error={errors.password ? true : false}
+						error={errors.password}
 						style={[styles.input, errors.password ? styles.hasErrors : null]}
 						defaultValue={password}
-						onChangeText={(text) => setValues({ ...values, password: text })}
+						onChangeText={(text) => onChangeText('password', text)}
 					/>
 
-					<Button gradient onPress={handleLogin}>
+					<Button gradient onPress={handleSubmit}>
 						{loading ? (
 							<ActivityIndicator size='small' color='white' />
 						) : (
@@ -95,3 +125,10 @@ const styles = StyleSheet.create({
 		borderBottomColor: theme.colors.accent,
 	},
 });
+
+const mapStateToProps = createStructuredSelector({
+	dataErrors: selectErrors,
+	loading: selectLoading,
+});
+
+export default connect(mapStateToProps)(Login);
