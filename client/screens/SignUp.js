@@ -6,7 +6,6 @@ import {
 	ActivityIndicator,
 	StyleSheet,
 	Keyboard,
-	AsyncStorage,
 	ScrollView,
 } from 'react-native';
 

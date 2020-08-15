@@ -20,7 +20,7 @@ function Splash({ navigation, user }) {
 
 	return (
 		<Block padding={[0, theme.sizes.padding * 2]} middle>
-			<Text h1 bold center>
+			<Text h1 bold gray center>
 				Welcome to Todo App
 			</Text>
 		</Block>
