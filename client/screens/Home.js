@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useBackHandler } from '@react-native-community/hooks';
 import { Ionicons } from '@expo/vector-icons';
 
 import { theme } from '../constants';
 import { Block, Text, Button } from '../components/utils';
+import TodoModalForm from '../components/todo-modal-form/TodoModalForm';
 
 const todos = [
 	{
@@ -64,6 +65,8 @@ const todos = [
 ];
 
 function Home() {
+	const [open, setOpen] = useState(true);
+
 	useBackHandler(() => {
 		// if (shouldBeHandledHere) {
 		// 	return true;
@@ -81,6 +84,8 @@ function Home() {
 
 	return (
 		<Block>
+			<TodoModalForm modalVisible={open} closeModal={() => setOpen(false)} />
+
 			<Text gray center h2 bold style={styles.header}>
 				Your ToDo
 			</Text>
@@ -89,9 +94,13 @@ function Home() {
 				<Block flex={0.85} padding={[0, theme.sizes.padding * 0.2]}>
 					<ScrollView>{renderTodo()}</ScrollView>
 				</Block>
-
 				<Block flex={0.15} row right>
-					<Button gradient shadow style={styles.addBtn}>
+					<Button
+						gradient
+						shadow
+						style={styles.addBtn}
+						onPress={() => setOpen(true)}
+					>
 						<Text white center>
 							<Ionicons size={theme.sizes.font * 3} name='ios-add' />
 						</Text>
