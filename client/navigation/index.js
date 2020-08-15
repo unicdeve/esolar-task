@@ -3,6 +3,7 @@ import { Image } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
+import Splash from '../screens/Splash';
 import Home from '../screens/Home';
 import Login from '../screens/Login';
 import SignUp from '../screens/SignUp';
@@ -11,6 +12,7 @@ import { theme } from '../constants';
 
 const screens = createStackNavigator(
 	{
+		Splash,
 		Login,
 		SignUp,
 		Home,

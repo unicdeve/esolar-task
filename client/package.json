@@ -8,6 +8,8 @@
 		"eject": "expo eject"
 	},
 	"dependencies": {
+		"@react-native-community/async-storage": "^1.11.0",
+		"@react-native-community/hooks": "^2.6.0",
 		"@react-native-community/masked-view": "^0.1.10",
 		"axios": "^0.19.2",
 		"expo": "~38.0.8",
@@ -27,6 +29,7 @@
 		"react-navigation-stack": "^2.7.0",
 		"react-redux": "^7.2.1",
 		"redux": "^4.0.5",
+		"redux-persist": "^6.0.0",
 		"redux-thunk": "^2.3.0",
 		"reselect": "^4.0.0"
 	},

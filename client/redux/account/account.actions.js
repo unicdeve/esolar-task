@@ -1,6 +1,7 @@
 import accountActionTypes from './account.types';
 import axios from 'axios';
-import { Alert } from 'react-native';
+import { Alert, AsyncStorage } from 'react-native';
+import setAuthToken from '../../utils/setAuthToken';
 
 export const getErrors = (errors) => ({
 	type: accountActionTypes.set_errors,
@@ -18,7 +19,7 @@ export const registerUser = (data, navigation) => (dispatch) => {
 		.post('/account/register/', data)
 		.then((res) => {
 			console.log(res.data);
-			setUser(res.data);
+			dispatch(setUser(res.data));
 			dispatch(getLoading(false));
 			dispatch(getErrors({}));
 			Alert.alert(
@@ -45,7 +46,7 @@ export const loginUser = (data, navigation) => (dispatch) => {
 	axios
 		.post('/account/login/', data)
 		.then((res) => {
-			setUser(res.data);
+			dispatch(setUser(res.data));
 			dispatch(getLoading(false));
 			dispatch(getErrors({}));
 
@@ -68,9 +69,11 @@ export const loginUser = (data, navigation) => (dispatch) => {
 		});
 };
 
-const setUser = (payload) => (dispatch) => {
-	dispatch({
+export const setUser = (payload) => {
+	setAuthToken(payload.token);
+
+	return {
 		type: accountActionTypes.set_user,
 		payload,
-	});
+	};
 };
