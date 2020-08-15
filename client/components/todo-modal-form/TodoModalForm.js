@@ -1,14 +1,66 @@
-import React from 'react';
-import { Alert, Modal, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import {
+	Alert,
+	Modal,
+	StyleSheet,
+	Keyboard,
+	ActivityIndicator,
+} from 'react-native';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { useDimensions } from '@react-native-community/hooks';
 
 import { Text, Button, Block, Input } from '../utils';
 import { theme } from '../../constants';
+import { useForm } from '../../utils/hooks/useForm';
+import { selectLoading, selectErrors } from '../../redux/todo/todo.selectors';
+import isEmpty from '../../utils/validations/is-empty';
+import { validateTodo } from '../../utils/validations/todo';
+import { getErrors, addTodo } from '../../redux/todo/todo.actions';
 
-function TodoModalForm({ modalVisible, closeModal, navigation, user }) {
+function TodoModalForm(props) {
 	const { width, height } = useDimensions().window;
+
+	const initialValues = {
+		title: '',
+	};
+
+	const { values, errors, setErrors, onChangeText, handleSubmit } = useForm(
+		submitTodo,
+		initialValues
+	);
+
+	const { title } = values;
+
+	const { modalVisible, closeModal, dataErrors, dispatch, loading } = props;
+
+	function submitTodo() {
+		Keyboard.dismiss();
+
+		const { isValid, errors } = validateTodo(values);
+
+		console.log(errors);
+
+		if (!isValid) dispatch(getErrors(errors));
+		else {
+			dispatch(addTodo(values, submitCallback));
+		}
+	}
+
+	function submitCallback() {
+		closeModal();
+	}
+
+	useEffect(() => {
+		if (!isEmpty(dataErrors)) {
+			console.log(dataErrors);
+			setErrors(dataErrors);
+		}
+
+		return () => {
+			setErrors({});
+		};
+	}, [dataErrors, setErrors]);
 
 	return (
 		<Modal
@@ -36,17 +88,20 @@ function TodoModalForm({ modalVisible, closeModal, navigation, user }) {
 						<Block>
 							<Input
 								label='Title'
-								// error={errors.username}
-								style={[
-									styles.input,
-									// errors.username ? styles.hasErrors : null,
-								]}
-								// defaultValue={username}
-								// onChangeText={(text) => onChangeText('username', text)}
+								error={errors.title}
+								style={[styles.input, errors.title ? styles.hasErrors : null]}
+								defaultValue={title}
+								onChangeText={(text) => onChangeText('title', text)}
 							/>
 						</Block>
-						<Button style={styles.addBtn} onPress={closeModal}>
-							<Text style={styles.textStyle}>Add</Text>
+						<Button style={styles.addBtn} onPress={handleSubmit}>
+							{loading ? (
+								<ActivityIndicator size='small' color='white' />
+							) : (
+								<Text bold white center>
+									Add
+								</Text>
+							)}
 						</Button>
 					</Block>
 				</Block>
@@ -79,11 +134,6 @@ const styles = StyleSheet.create({
 		elevation: 5,
 	},
 
-	textStyle: {
-		color: 'white',
-		fontWeight: 'bold',
-		textAlign: 'center',
-	},
 	header: {
 		marginBottom: 15,
 	},
@@ -98,6 +148,9 @@ const styles = StyleSheet.create({
 	addBtn: { padding: 10, backgroundColor: '#21e6c1' },
 });
 
-const mapStateToProps = createStructuredSelector({});
+const mapStateToProps = createStructuredSelector({
+	loading: selectLoading,
+	dataErrors: selectErrors,
+});
 
 export default connect(mapStateToProps)(TodoModalForm);

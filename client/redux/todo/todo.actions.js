@@ -29,3 +29,23 @@ export const getTodos = () => (dispatch) => {
 			err.response && dispatch(getErrors(err.response.data));
 		});
 };
+
+export const addTodo = (data, cb) => (dispatch) => {
+	dispatch(getLoading(true));
+	axios
+		.post('/todo/', data)
+		.then((res) => {
+			dispatch({
+				type: todoActionTypes.add_todo,
+				payload: res.data,
+			});
+			dispatch(getLoading(false));
+			dispatch(getErrors({}));
+			cb();
+		})
+		.catch((err) => {
+			dispatch(getLoading(false));
+			console.log(err);
+			err.response && dispatch(getErrors(err.response.data));
+		});
+};

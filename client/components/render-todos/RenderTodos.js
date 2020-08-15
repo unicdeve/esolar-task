@@ -1,8 +1,10 @@
 import React from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { Block, Text } from '../utils';
+import { Block, Text, Switch } from '../utils';
 import isEmpty from '../../utils/validations/is-empty';
+import { theme } from '../../constants';
 
 function RenderTodos({ todos }) {
 	const displayTodos = () =>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useBackHandler } from '@react-native-community/hooks';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import { theme } from '../constants';
 import { Block, Text, Button, Switch } from '../components/utils';
