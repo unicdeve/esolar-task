@@ -1,18 +1,12 @@
 import { createSelector } from 'reselect';
 
-export const selectAccount = (state) => state.account;
+export const selectTodo = (state) => state.todo;
 
-export const selectErrors = createSelector(
-	[selectAccount],
-	(account) => account.errors
-);
+export const selectErrors = createSelector([selectTodo], (todo) => todo.errors);
 
 export const selectLoading = createSelector(
-	[selectAccount],
-	(account) => account.loading
+	[selectTodo],
+	(todo) => todo.loading
 );
 
-export const selectUser = createSelector(
-	[selectAccount],
-	(account) => account.user
-);
+export const selectTodos = createSelector([selectTodo], (todo) => todo.todos);

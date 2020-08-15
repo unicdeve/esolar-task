@@ -1,29 +1,29 @@
-import accountActionTypes from './account.types';
+import todoActionTypes from './todo.types';
 
 const initialState = {
 	errors: {},
 	loading: false,
-	user: {},
+	todos: [],
 };
 
-const accountReducer = (state = initialState, action) => {
+const todoReducer = (state = initialState, action) => {
 	switch (action.type) {
-		case accountActionTypes.set_errors:
+		case todoActionTypes.set_errors:
 			return {
 				...state,
 				errors: action.payload,
 			};
 
-		case accountActionTypes.loading:
+		case todoActionTypes.loading:
 			return {
 				...state,
 				loading: action.payload,
 			};
 
-		case accountActionTypes.set_user:
+		case todoActionTypes.set_todos:
 			return {
 				...state,
-				user: action.payload,
+				todos: action.payload,
 			};
 
 		default:
@@ -31,4 +31,4 @@ const accountReducer = (state = initialState, action) => {
 	}
 };
 
-export default accountReducer;
+export default todoReducer;

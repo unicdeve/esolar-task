@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useBackHandler } from '@react-native-community/hooks';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -6,60 +6,15 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { theme } from '../constants';
 import { Block, Text, Button, Switch } from '../components/utils';
 import TodoModalForm from '../components/todo-modal-form/TodoModalForm';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { selectTodos } from '../redux/todo/todo.selectors';
+import { getTodos } from '../redux/todo/todo.actions';
+import isEmpty from '../utils/validations/is-empty';
+import RenderTodos from '../components/render-todos/RenderTodos';
 
-const todos = [
-	{
-		title: 'First todo',
-		completed: true,
-	},
-
-	{
-		title: 'First todo',
-		completed: true,
-	},
-
-	{
-		title: 'First todo',
-		completed: true,
-	},
-
-	{
-		title: 'First todo',
-		completed: false,
-	},
-	{
-		title: 'First todo',
-		completed: false,
-	},
-	{
-		title: 'First todo',
-		completed: false,
-	},
-
-	{
-		title: 'First todo',
-		completed: false,
-	},
-	{
-		title: 'First todo',
-		completed: false,
-	},
-	{
-		title: 'First todo',
-		completed: false,
-	},
-	{
-		title: 'First todo',
-		completed: false,
-	},
-	{
-		title: 'First todo',
-		completed: false,
-	},
-];
-
-function Home() {
-	const [open, setOpen] = useState(true);
+function Home({ dispatch, todos }) {
+	const [open, setOpen] = useState(false);
 
 	useBackHandler(() => {
 		// if (shouldBeHandledHere) {
@@ -69,29 +24,9 @@ function Home() {
 		return true;
 	});
 
-	const renderTodo = () =>
-		todos.map((todo, i) => (
-			<Block key={i} style={styles.todo}>
-				<Text
-					title
-					style={[todo.completed ? styles.completed : styles.uncompleted]}
-				>
-					{todo.title}
-				</Text>
-				<Block flex={false} row>
-					<MaterialCommunityIcons
-						name='delete-outline'
-						size={theme.sizes.font * 1.5}
-						color='gray'
-						style={styles.deleteIcon}
-					/>
-					<Switch
-						value={todo.completed}
-						onValueChange={(value) => console.log(value)}
-					/>
-				</Block>
-			</Block>
-		));
+	useEffect(() => {
+		dispatch(getTodos());
+	}, [dispatch]);
 
 	return (
 		<Block>
@@ -102,8 +37,8 @@ function Home() {
 			</Text>
 
 			<Block flex={1}>
-				<Block flex={0.85} padding={[0, theme.sizes.padding * 0.2]}>
-					<ScrollView>{renderTodo()}</ScrollView>
+				<Block flex={0.85} middle padding={[0, theme.sizes.padding * 0.2]}>
+					<RenderTodos todos={todos} />
 				</Block>
 				<Block flex={0.15} row right>
 					<Button
@@ -134,31 +69,6 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 		marginRight: 10,
 	},
-
-	todo: {
-		backgroundColor: '#e2f3f5',
-		marginBottom: 3,
-		paddingHorizontal: 5,
-		paddingVertical: 10,
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-
-	deleteIcon: {
-		marginRight: 20,
-	},
-
-	completed: {
-		textDecorationLine: 'line-through',
-		color: '#facf5a',
-		fontStyle: 'italic',
-	},
-
-	uncompleted: {
-		color: '#1f4287',
-	},
 });
 
 Home.navigationOptions = {
@@ -169,4 +79,8 @@ Home.navigationOptions = {
 	gestureEnabled: false,
 };
 
-export default Home;
+const mapStateToProps = createStructuredSelector({
+	todos: selectTodos,
+});
+
+export default connect(mapStateToProps)(Home);
