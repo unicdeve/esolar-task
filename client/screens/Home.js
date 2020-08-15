@@ -152,8 +152,7 @@ const styles = StyleSheet.create({
 
 	completed: {
 		textDecorationLine: 'line-through',
-		textDecorationColor: theme.colors.accent,
-		color: '#ff304f',
+		color: '#facf5a',
 		fontStyle: 'italic',
 	},
 
