@@ -17,6 +17,7 @@ export const useForm = (submitCallback, initialState = {}) => {
 		onChangeText,
 		handleSubmit,
 		values,
+		setValues,
 		errors,
 		setErrors,
 	};

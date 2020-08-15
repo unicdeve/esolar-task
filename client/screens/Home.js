@@ -9,8 +9,9 @@ import TodoModalForm from '../components/todo-modal-form/TodoModalForm';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import RenderTodos from '../components/render-todos/RenderTodos';
+import { setTodo } from '../redux/todo/todo.actions';
 
-function Home() {
+function Home({ dispatch }) {
 	const [open, setOpen] = useState(false);
 
 	useBackHandler(() => {
@@ -21,9 +22,19 @@ function Home() {
 		return true;
 	});
 
+	const selectTodo = (todo) => {
+		dispatch(setTodo(todo));
+		setOpen(true);
+	};
+
+	const closeModal = () => {
+		dispatch(setTodo({}));
+		setOpen(false);
+	};
+
 	return (
 		<Block>
-			<TodoModalForm modalVisible={open} closeModal={() => setOpen(false)} />
+			<TodoModalForm modalVisible={open} closeModal={closeModal} />
 
 			<Text gray center h2 bold style={styles.header}>
 				Your ToDo
@@ -31,8 +42,9 @@ function Home() {
 
 			<Block flex={1}>
 				<Block flex={0.85} middle padding={[0, theme.sizes.padding * 0.2]}>
-					<RenderTodos />
+					<RenderTodos selectTodo={selectTodo} />
 				</Block>
+
 				<Block flex={0.15} row right>
 					<Button
 						gradient

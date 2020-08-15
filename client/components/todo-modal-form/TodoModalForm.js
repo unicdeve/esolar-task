@@ -13,10 +13,14 @@ import { useDimensions } from '@react-native-community/hooks';
 import { Text, Button, Block, Input } from '../utils';
 import { theme } from '../../constants';
 import { useForm } from '../../utils/hooks/useForm';
-import { selectLoading, selectErrors } from '../../redux/todo/todo.selectors';
+import {
+	selectLoading,
+	selectErrors,
+	selectToDo,
+} from '../../redux/todo/todo.selectors';
 import isEmpty from '../../utils/validations/is-empty';
 import { validateTodo } from '../../utils/validations/todo';
-import { getErrors, addTodo } from '../../redux/todo/todo.actions';
+import { getErrors, addTodo, editTodo } from '../../redux/todo/todo.actions';
 
 function TodoModalForm(props) {
 	const { width, height } = useDimensions().window;
@@ -25,31 +29,45 @@ function TodoModalForm(props) {
 		title: '',
 	};
 
-	const { values, errors, setErrors, onChangeText, handleSubmit } = useForm(
-		submitTodo,
-		initialValues
-	);
+	const {
+		values,
+		setValues,
+		errors,
+		setErrors,
+		onChangeText,
+		handleSubmit,
+	} = useForm(submitTodo, initialValues);
 
 	const { title } = values;
 
-	const { modalVisible, closeModal, dataErrors, dispatch, loading } = props;
+	const {
+		modalVisible,
+		closeModal,
+		dataErrors,
+		dispatch,
+		loading,
+		todo,
+	} = props;
 
 	function submitTodo() {
 		Keyboard.dismiss();
 
 		const { isValid, errors } = validateTodo(values);
 
-		console.log(errors);
-
 		if (!isValid) dispatch(getErrors(errors));
 		else {
-			dispatch(addTodo(values, submitCallback));
+			dispatch(addTodo(values, onClose));
 		}
 	}
 
-	function submitCallback() {
+	function onClose() {
 		closeModal();
+		setValues(initialValues);
 	}
+
+	const editSelectedTodo = () => {
+		!isEmpty(todo) && dispatch(editTodo(values, onClose));
+	};
 
 	useEffect(() => {
 		if (!isEmpty(dataErrors)) {
@@ -61,15 +79,18 @@ function TodoModalForm(props) {
 		};
 	}, [dataErrors, setErrors]);
 
+	useEffect(() => {
+		if (!isEmpty(todo)) {
+			setValues(todo);
+		}
+	}, [todo, setValues]);
+
 	return (
 		<Modal
 			animationType='slide'
 			transparent={true}
 			visible={modalVisible}
-			onRequestClose={() => {
-				Alert.alert('Modal has been closed.');
-				closeModal();
-			}}
+			onRequestClose={onClose}
 		>
 			<Block style={[styles.centeredView]}>
 				<Block
@@ -80,7 +101,7 @@ function TodoModalForm(props) {
 					]}
 				>
 					<Text h3 bold gray center style={styles.header}>
-						Add new list
+						{!isEmpty(todo) ? 'Edit todo' : 'Add new todo'}
 					</Text>
 
 					<Block style={{ width: width - 100 }}>
@@ -93,12 +114,15 @@ function TodoModalForm(props) {
 								onChangeText={(text) => onChangeText('title', text)}
 							/>
 						</Block>
-						<Button style={styles.addBtn} onPress={handleSubmit}>
+						<Button
+							style={styles.addBtn}
+							onPress={!isEmpty(todo) ? editSelectedTodo : handleSubmit}
+						>
 							{loading ? (
 								<ActivityIndicator size='small' color='white' />
 							) : (
 								<Text bold white center>
-									Add
+									{!isEmpty(todo) ? 'Edit' : 'Add'}
 								</Text>
 							)}
 						</Button>
@@ -150,6 +174,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
 	loading: selectLoading,
 	dataErrors: selectErrors,
+	todo: selectToDo,
 });
 
 export default connect(mapStateToProps)(TodoModalForm);

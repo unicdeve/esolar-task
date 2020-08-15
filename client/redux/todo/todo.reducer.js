@@ -4,6 +4,7 @@ const initialState = {
 	errors: {},
 	loading: false,
 	todos: [],
+	todo: {},
 };
 
 const todoReducer = (state = initialState, action) => {
@@ -33,6 +34,12 @@ const todoReducer = (state = initialState, action) => {
 				todos: action.payload,
 			};
 
+		case todoActionTypes.set_todo:
+			return {
+				...state,
+				todo: action.payload,
+			};
+
 		case todoActionTypes.add_todo:
 			return {
 				...state,
@@ -50,13 +57,12 @@ const todoReducer = (state = initialState, action) => {
 			};
 
 		case todoActionTypes.mark_complete:
+		case todoActionTypes.edit_todo:
 			todos = state.todos;
 
 			if (todoIndex !== -1) {
 				todos[todoIndex] = action.payload.data;
 			}
-
-			console.log('action.payload.data', action.payload.data);
 
 			return {
 				...state,

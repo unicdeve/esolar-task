@@ -95,3 +95,26 @@ export const toggleComplete = (todo) => (dispatch) => {
 			err.response && dispatch(getErrors(err.response.data));
 		});
 };
+
+export const editTodo = (data, cb) => (dispatch) => {
+	dispatch(getLoading(true));
+
+	axios
+		.patch(`/todo/${data.id}/`, data)
+		.then((res) => {
+			dispatch(getTodos());
+			dispatch(getLoading(false));
+			dispatch(getErrors({}));
+			cb();
+		})
+		.catch((err) => {
+			dispatch(getLoading(false));
+			console.log(err);
+			err.response && dispatch(getErrors(err.response.data));
+		});
+};
+
+export const setTodo = (todo) => ({
+	type: todoActionTypes.set_todo,
+	payload: todo,
+});

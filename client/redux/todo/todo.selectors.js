@@ -10,3 +10,5 @@ export const selectLoading = createSelector(
 );
 
 export const selectTodos = createSelector([selectTodo], (todo) => todo.todos);
+
+export const selectToDo = createSelector([selectTodo], (todo) => todo.todo);

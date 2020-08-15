@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 
 import { Block, Text, Switch } from '../utils';
 import isEmpty from '../../utils/validations/is-empty';
@@ -14,7 +14,7 @@ import {
 	toggleComplete,
 } from '../../redux/todo/todo.actions';
 
-function RenderTodos({ todos: allTodos, dispatch }) {
+function RenderTodos({ todos: allTodos, selectTodo, dispatch }) {
 	const [todos, setTodos] = useState([]);
 
 	const handleDelete = (id) => {
@@ -44,8 +44,15 @@ function RenderTodos({ todos: allTodos, dispatch }) {
 							name='delete-outline'
 							size={theme.sizes.font * 1.5}
 							color='gray'
-							style={styles.deleteIcon}
+							style={styles.actionIcon}
 							onPress={() => handleDelete(todo.id)}
+						/>
+						<Feather
+							name='edit-3'
+							size={theme.sizes.font * 1.5}
+							style={styles.actionIcon}
+							color='gray'
+							onPress={() => selectTodo(todo)}
 						/>
 						<Switch
 							value={todo.completed}
@@ -81,7 +88,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 
-	deleteIcon: {
+	actionIcon: {
 		marginRight: 20,
 	},
 
