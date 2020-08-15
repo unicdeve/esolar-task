@@ -40,9 +40,23 @@ const todoReducer = (state = initialState, action) => {
 			};
 
 		case todoActionTypes.delete_todo:
-			const todos = state.todos.filter(
+			let todos = state.todos.filter(
 				(todo) => todo.id !== action.payload.todoId
 			);
+
+			return {
+				...state,
+				todos,
+			};
+
+		case todoActionTypes.mark_complete:
+			todos = state.todos;
+
+			if (todoIndex !== -1) {
+				todos[todoIndex] = action.payload.data;
+			}
+
+			console.log('action.payload.data', action.payload.data);
 
 			return {
 				...state,

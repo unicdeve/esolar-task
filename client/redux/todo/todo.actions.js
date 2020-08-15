@@ -52,6 +52,7 @@ export const addTodo = (data, cb) => (dispatch) => {
 
 export const deleteTodo = (todoId) => (dispatch) => {
 	dispatch(getLoading(true));
+
 	axios
 		.delete(`/todo/${todoId}/`)
 		.then((res) => {
@@ -61,6 +62,30 @@ export const deleteTodo = (todoId) => (dispatch) => {
 					todoId,
 				},
 			});
+			dispatch(getLoading(false));
+			dispatch(getErrors({}));
+		})
+		.catch((err) => {
+			dispatch(getLoading(false));
+			console.log(err);
+			err.response && dispatch(getErrors(err.response.data));
+		});
+};
+
+export const toggleComplete = (todo) => (dispatch) => {
+	dispatch(getLoading(true));
+
+	axios
+		.patch(`/todo/${todo.id}/`, { completed: !todo.completed })
+		.then((res) => {
+			// dispatch({
+			// 	type: todoActionTypes.mark_complete,
+			// 	payload: {
+			// 		todoId: res.data.id,
+			// 		data: res.data,
+			// 	},
+			// });
+			dispatch(getTodos());
 			dispatch(getLoading(false));
 			dispatch(getErrors({}));
 		})

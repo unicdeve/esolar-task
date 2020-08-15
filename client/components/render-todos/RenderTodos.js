@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -8,9 +8,15 @@ import { theme } from '../../constants';
 import { selectTodos } from '../../redux/todo/todo.selectors';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { getTodos, deleteTodo } from '../../redux/todo/todo.actions';
+import {
+	getTodos,
+	deleteTodo,
+	toggleComplete,
+} from '../../redux/todo/todo.actions';
 
-function RenderTodos({ todos, dispatch }) {
+function RenderTodos({ todos: allTodos, dispatch }) {
+	const [todos, setTodos] = useState([]);
+
 	const handleDelete = (id) => {
 		dispatch(deleteTodo(id));
 	};
@@ -18,6 +24,10 @@ function RenderTodos({ todos, dispatch }) {
 	useEffect(() => {
 		dispatch(getTodos());
 	}, [dispatch]);
+
+	useEffect(() => {
+		setTodos(allTodos);
+	}, [allTodos]);
 
 	const displayTodos = () =>
 		!isEmpty(todos) ? (
@@ -39,7 +49,7 @@ function RenderTodos({ todos, dispatch }) {
 						/>
 						<Switch
 							value={todo.completed}
-							onValueChange={(value) => console.log(value)}
+							onValueChange={(value) => dispatch(toggleComplete(todo))}
 						/>
 					</Block>
 				</Block>

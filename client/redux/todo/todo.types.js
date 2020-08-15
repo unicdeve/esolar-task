@@ -4,4 +4,5 @@ export default {
 	set_todos: 'set_todos',
 	add_todo: 'add_todo',
 	delete_todo: 'delete_todo',
+	mark_complete: 'mark_complete',
 };
