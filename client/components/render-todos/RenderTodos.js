@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Block, Text, Switch } from '../utils';
 import isEmpty from '../../utils/validations/is-empty';
 import { theme } from '../../constants';
+import { selectTodos } from '../../redux/todo/todo.selectors';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { getTodos, deleteTodo } from '../../redux/todo/todo.actions';
 
-function RenderTodos({ todos }) {
+function RenderTodos({ todos, dispatch }) {
+	const handleDelete = (id) => {
+		dispatch(deleteTodo(id));
+	};
+
+	useEffect(() => {
+		dispatch(getTodos());
+	}, [dispatch]);
+
 	const displayTodos = () =>
 		!isEmpty(todos) ? (
 			todos.map((todo, i) => (
@@ -23,6 +35,7 @@ function RenderTodos({ todos }) {
 							size={theme.sizes.font * 1.5}
 							color='gray'
 							style={styles.deleteIcon}
+							onPress={() => handleDelete(todo.id)}
 						/>
 						<Switch
 							value={todo.completed}
@@ -73,4 +86,8 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default RenderTodos;
+const mapStateToProps = createStructuredSelector({
+	todos: selectTodos,
+});
+
+export default connect(mapStateToProps)(RenderTodos);

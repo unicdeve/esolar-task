@@ -7,6 +7,13 @@ const initialState = {
 };
 
 const todoReducer = (state = initialState, action) => {
+	let todoIndex;
+	if (action.payload) {
+		todoIndex = state.todos.findIndex(
+			(todo) => todo.id === action.payload.todoId
+		);
+	}
+
 	switch (action.type) {
 		case todoActionTypes.set_errors:
 			return {
@@ -30,6 +37,16 @@ const todoReducer = (state = initialState, action) => {
 			return {
 				...state,
 				todos: [...state.todos, action.payload],
+			};
+
+		case todoActionTypes.delete_todo:
+			const todos = state.todos.filter(
+				(todo) => todo.id !== action.payload.todoId
+			);
+
+			return {
+				...state,
+				todos,
 			};
 
 		default:

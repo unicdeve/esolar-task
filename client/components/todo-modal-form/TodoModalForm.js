@@ -53,7 +53,6 @@ function TodoModalForm(props) {
 
 	useEffect(() => {
 		if (!isEmpty(dataErrors)) {
-			console.log(dataErrors);
 			setErrors(dataErrors);
 		}
 

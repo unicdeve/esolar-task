@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { useBackHandler } from '@react-native-community/hooks';
 import { Ionicons } from '@expo/vector-icons';
 
 import { theme } from '../constants';
-import { Block, Text, Button, Switch } from '../components/utils';
+import { Block, Text, Button } from '../components/utils';
 import TodoModalForm from '../components/todo-modal-form/TodoModalForm';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectTodos } from '../redux/todo/todo.selectors';
-import { getTodos } from '../redux/todo/todo.actions';
-import isEmpty from '../utils/validations/is-empty';
 import RenderTodos from '../components/render-todos/RenderTodos';
 
-function Home({ dispatch, todos }) {
+function Home() {
 	const [open, setOpen] = useState(false);
 
 	useBackHandler(() => {
@@ -23,10 +20,6 @@ function Home({ dispatch, todos }) {
 		// remove default behaviour
 		return true;
 	});
-
-	useEffect(() => {
-		dispatch(getTodos());
-	}, [dispatch]);
 
 	return (
 		<Block>
@@ -38,7 +31,7 @@ function Home({ dispatch, todos }) {
 
 			<Block flex={1}>
 				<Block flex={0.85} middle padding={[0, theme.sizes.padding * 0.2]}>
-					<RenderTodos todos={todos} />
+					<RenderTodos />
 				</Block>
 				<Block flex={0.15} row right>
 					<Button
@@ -79,8 +72,6 @@ Home.navigationOptions = {
 	gestureEnabled: false,
 };
 
-const mapStateToProps = createStructuredSelector({
-	todos: selectTodos,
-});
+const mapStateToProps = createStructuredSelector({});
 
 export default connect(mapStateToProps)(Home);

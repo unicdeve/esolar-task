@@ -3,4 +3,5 @@ export default {
 	loading: 'loading',
 	set_todos: 'set_todos',
 	add_todo: 'add_todo',
+	delete_todo: 'delete_todo',
 };
