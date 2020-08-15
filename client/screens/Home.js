@@ -11,8 +11,9 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import RenderTodos from '../components/render-todos/RenderTodos';
 import { setTodo } from '../redux/todo/todo.actions';
+import { logoutUser } from '../redux/account/account.actions';
 
-function Home({ dispatch }) {
+function Home({ dispatch, navigation }) {
 	const [open, setOpen] = useState(false);
 
 	useBackHandler(() => {
@@ -43,6 +44,24 @@ function Home({ dispatch }) {
 		Alert.alert('Sorry, try again, you are not connected to the internet.');
 	}
 
+	const logout = () => {
+		Alert.alert(
+			'Logout!',
+			"We don't want to see you go, kindly come back soon",
+			[
+				{
+					text: 'Cancel',
+					onPress: () => null,
+				},
+				{
+					text: 'Logout',
+					onPress: () => dispatch(logoutUser(navigation)),
+				},
+			],
+			{ cancelable: true }
+		);
+	};
+
 	return (
 		<Block>
 			<TodoModalForm
@@ -65,7 +84,11 @@ function Home({ dispatch }) {
 					/>
 				</Block>
 
-				<Block flex={0.15} row right>
+				<Block flex={0.15} row style={styles.actionsContainer}>
+					<Button style={styles.logout} onPress={logout}>
+						<Text>Logout</Text>
+					</Button>
+
 					<Button
 						gradient
 						shadow
@@ -86,6 +109,15 @@ const styles = StyleSheet.create({
 	header: {
 		marginBottom: 20,
 		marginTop: 10,
+	},
+
+	actionsContainer: {
+		justifyContent: 'space-between',
+		alignItems: 'center',
+	},
+
+	logout: {
+		marginLeft: 10,
 	},
 
 	addBtn: {

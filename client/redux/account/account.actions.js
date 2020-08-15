@@ -2,6 +2,7 @@ import accountActionTypes from './account.types';
 import axios from 'axios';
 import { Alert, AsyncStorage } from 'react-native';
 import setAuthToken from '../../utils/setAuthToken';
+import todoTypes from '../todo/todo.types';
 
 export const getErrors = (errors) => ({
 	type: accountActionTypes.set_errors,
@@ -61,6 +62,28 @@ export const loginUser = (data, navigation) => (dispatch) => {
 				],
 				{ cancelable: false }
 			);
+		})
+		.catch((err) => {
+			dispatch(getLoading(false));
+			console.log(err);
+			err.response && dispatch(getErrors(err.response.data));
+		});
+};
+
+export const logoutUser = (navigation) => (dispatch) => {
+	dispatch(getLoading(true));
+	axios
+		.get('/account/logout/')
+		.then((res) => {
+			dispatch(setUser({}));
+			dispatch({
+				type: todoTypes.set_todos,
+				payload: [],
+			});
+			dispatch(getLoading(false));
+			dispatch(getErrors({}));
+
+			navigation.navigate('Login');
 		})
 		.catch((err) => {
 			dispatch(getLoading(false));

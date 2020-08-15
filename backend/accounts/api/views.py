@@ -23,7 +23,16 @@ class UserRegisterView(generics.CreateAPIView):
 
         if serializer.is_valid():
             user = serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            (token, _) = Token.objects.get_or_create(user=user)
+
+            data = {
+                "token": token.key,
+                "id": user.id,
+                "email": user.email,
+            }
+
+            return Response(data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -40,7 +49,7 @@ class LoginViewSet(viewsets.ViewSet):
 
             return Response(data, status=status.HTTP_200_OK)
 
-        return Response(["Wrong email/password."], status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"username": ["Wrong email/password."]}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutViewSet(viewsets.ViewSet):

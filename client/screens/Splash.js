@@ -7,12 +7,13 @@ import { Block, Text } from '../components/utils';
 import { theme } from '../constants';
 import { createStructuredSelector } from 'reselect';
 import setAuthToken from '../utils/setAuthToken';
+import isEmpty from '../utils/validations/is-empty';
 
 function Splash({ navigation, user }) {
 	useEffect(() => {
-		if (user) {
+		if (!isEmpty(user)) {
 			setAuthToken(user.token);
-			navigation.navigate('Home');
+			navigation.navigate('Login');
 		} else {
 			navigation.navigate('Login');
 		}
