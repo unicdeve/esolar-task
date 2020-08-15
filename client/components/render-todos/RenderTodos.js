@@ -1,24 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, Alert } from 'react-native';
 import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import { createStructuredSelector } from 'reselect';
 
 import { Block, Text, Switch } from '../utils';
 import isEmpty from '../../utils/validations/is-empty';
 import { theme } from '../../constants';
 import { selectTodos } from '../../redux/todo/todo.selectors';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import {
 	getTodos,
 	deleteTodo,
 	toggleComplete,
 } from '../../redux/todo/todo.actions';
 
-function RenderTodos({ todos: allTodos, selectTodo, dispatch }) {
+function RenderTodos({
+	todos: allTodos,
+	selectTodo,
+	dispatch,
+	getInternetStatus,
+	noInternet,
+}) {
 	const [todos, setTodos] = useState([]);
 
 	const handleDelete = (id) => {
-		dispatch(deleteTodo(id));
+		if (getInternetStatus()) dispatch(deleteTodo(id));
+		else noInternet();
 	};
 
 	useEffect(() => {
@@ -56,7 +63,13 @@ function RenderTodos({ todos: allTodos, selectTodo, dispatch }) {
 						/>
 						<Switch
 							value={todo.completed}
-							onValueChange={(value) => dispatch(toggleComplete(todo))}
+							onValueChange={(value) => {
+								if (getInternetStatus()) {
+									dispatch(toggleComplete(todo));
+								} else {
+									noInternet();
+								}
+							}}
 						/>
 					</Block>
 				</Block>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Alert } from 'react-native';
 import { useBackHandler } from '@react-native-community/hooks';
+import { useNetInfo } from '@react-native-community/netinfo';
 import { Ionicons } from '@expo/vector-icons';
 
 import { theme } from '../constants';
@@ -32,9 +33,24 @@ function Home({ dispatch }) {
 		setOpen(false);
 	};
 
+	const netInfo = useNetInfo();
+
+	function getInternetStatus() {
+		return netInfo.isConnected && netInfo.isInternetReachable;
+	}
+
+	function noInternet() {
+		Alert.alert('Sorry, try again, you are not connected to the internet.');
+	}
+
 	return (
 		<Block>
-			<TodoModalForm modalVisible={open} closeModal={closeModal} />
+			<TodoModalForm
+				modalVisible={open}
+				closeModal={closeModal}
+				getInternetStatus={getInternetStatus}
+				noInternet={noInternet}
+			/>
 
 			<Text gray center h2 bold style={styles.header}>
 				Your ToDo
@@ -42,7 +58,11 @@ function Home({ dispatch }) {
 
 			<Block flex={1}>
 				<Block flex={0.85} middle padding={[0, theme.sizes.padding * 0.2]}>
-					<RenderTodos selectTodo={selectTodo} />
+					<RenderTodos
+						selectTodo={selectTodo}
+						getInternetStatus={getInternetStatus}
+						noInternet={noInternet}
+					/>
 				</Block>
 
 				<Block flex={0.15} row right>

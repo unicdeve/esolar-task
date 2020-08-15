@@ -47,6 +47,8 @@ function TodoModalForm(props) {
 		dispatch,
 		loading,
 		todo,
+		getInternetStatus,
+		noInternet,
 	} = props;
 
 	function submitTodo() {
@@ -116,7 +118,15 @@ function TodoModalForm(props) {
 						</Block>
 						<Button
 							style={styles.addBtn}
-							onPress={!isEmpty(todo) ? editSelectedTodo : handleSubmit}
+							onPress={() => {
+								if (getInternetStatus()) {
+									if (!isEmpty(todo)) editSelectedTodo();
+									else handleSubmit();
+								} else {
+									// onClose();
+									noInternet();
+								}
+							}}
 						>
 							{loading ? (
 								<ActivityIndicator size='small' color='white' />
