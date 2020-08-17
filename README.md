@@ -1,6 +1,6 @@
-# femality
+# Esolar task
 
-femality Health Django Backend
+Esolar Coding Challenge
 
 ## Backend usage
 
